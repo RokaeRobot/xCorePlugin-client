@@ -1,0 +1,12 @@
+#ifndef XPLUGINDEMO_GLOBAL_H
+#define XPLUGINDEMO_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(XPLUGINDEMO_LIBRARY)
+#  define XPLUGINDEMO_EXPORT Q_DECL_EXPORT
+#else
+#  define XPLUGINDEMO_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // XPLUGINDEMO_GLOBAL_H

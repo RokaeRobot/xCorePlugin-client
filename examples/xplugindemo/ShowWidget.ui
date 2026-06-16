@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ShowWidget</class>
+ <widget class="QWidget" name="ShowWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>480</width>
+    <height>832</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="1">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="28" column="1">
+      <widget class="QLabel" name="labChangePower">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="1">
+      <widget class="QPushButton" name="pushButton_24">
+       <property name="text">
+        <string>movetostop</string>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="0">
+      <widget class="QPushButton" name="pushButton_11">
+       <property name="text">
+        <string>set xservice</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1">
+      <widget class="QLineEdit" name="pointName"/>
+     </item>
+     <item row="6" column="0">
+      <widget class="QPushButton" name="throwLog">
+       <property name="text">
+        <string>throw log</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="2">
+      <widget class="QPushButton" name="pushButton_7">
+       <property name="text">
+        <string>all register</string>
+       </property>
+      </widget>
+     </item>
+     <item row="29" column="0">
+      <widget class="QPushButton" name="btnChangeModel">
+       <property name="text">
+        <string>ChangeModel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QPushButton" name="pushButton_6">
+       <property name="text">
+        <string>register Name</string>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="0">
+      <widget class="QPushButton" name="pushButton_12">
+       <property name="text">
+        <string>comand xservice</string>
+       </property>
+      </widget>
+     </item>
+     <item row="30" column="2">
+      <widget class="QPushButton" name="btnUnSubscribe">
+       <property name="text">
+        <string>unSubscribe</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QLineEdit" name="varLineEdit"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="pushButton_1">
+       <property name="text">
+        <string>net work</string>
+       </property>
+      </widget>
+     </item>
+     <item row="21" column="0">
+      <widget class="QPushButton" name="pushButton_20">
+       <property name="text">
+        <string>set xservice</string>
+       </property>
+      </widget>
+     </item>
+     <item row="26" column="0">
+      <widget class="QPushButton" name="btnFullScreen">
+       <property name="text">
+        <string>fullScreen</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>point list</string>
+       </property>
+      </widget>
+     </item>
+     <item row="27" column="0">
+      <widget class="QPushButton" name="btnModelWindow">
+       <property name="text">
+        <string>ModelWindow</string>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="0">
+      <widget class="QPushButton" name="pushButton_10">
+       <property name="text">
+        <string>start connect to network</string>
+       </property>
+      </widget>
+     </item>
+     <item row="30" column="0">
+      <widget class="QPushButton" name="btnSubscribe">
+       <property name="text">
+        <string>subscribe</string>
+       </property>
+      </widget>
+     </item>
+     <item row="19" column="0">
+      <widget class="QPushButton" name="pushButton_17">
+       <property name="text">
+        <string>get robot template</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="0">
+      <widget class="QPushButton" name="movetostart">
+       <property name="text">
+        <string>movetostart</string>
+       </property>
+      </widget>
+     </item>
+     <item row="24" column="0">
+      <widget class="QPushButton" name="pushButton_18">
+       <property name="text">
+        <string>request</string>
+       </property>
+      </widget>
+     </item>
+     <item row="29" column="1">
+      <widget class="QLabel" name="labChanegModel">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="text">
+        <string>var list</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="28" column="0">
+      <widget class="QPushButton" name="btnChangePower">
+       <property name="text">
+        <string>ChangePower</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>add cart point</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="0">
+      <widget class="QPushButton" name="pushButton_25">
+       <property name="text">
+        <string>add pointCart</string>
+       </property>
+      </widget>
+     </item>
+     <item row="20" column="0">
+      <widget class="QPushButton" name="pushButton_14">
+       <property name="text">
+        <string>get xservice</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="0">
+      <widget class="QPushButton" name="pushButton_9">
+       <property name="text">
+        <string>regist xservice</string>
+       </property>
+      </widget>
+     </item>
+     <item row="23" column="0">
+      <widget class="QPushButton" name="pushButton_22">
+       <property name="text">
+        <string>execCommand xservice</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="3">
+      <widget class="QLineEdit" name="wobjName"/>
+     </item>
+     <item row="7" column="0">
+      <widget class="QPushButton" name="addVarBtn">
+       <property name="text">
+        <string>add var</string>
+       </property>
+      </widget>
+     </item>
+     <item row="30" column="1">
+      <widget class="QPushButton" name="btnPublish">
+       <property name="text">
+        <string>publish</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="2">
+      <widget class="QLineEdit" name="toolName"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QPushButton" name="pushButton_4">
+       <property name="text">
+        <string>mobj list</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLineEdit" name="msg"/>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="22" column="0">
+      <widget class="QPushButton" name="pushButton_21">
+       <property name="text">
+        <string>command xservice</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="2">
+      <widget class="QPushButton" name="delVarBtn">
+       <property name="text">
+        <string>del var</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="QPushButton" name="pushButton_8">
+       <property name="text">
+        <string>io</string>
+       </property>
+      </widget>
+     </item>
+     <item row="19" column="0">
+      <widget class="QPushButton" name="pushButton_13">
+       <property name="text">
+        <string>execCommand xservice</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2">
+      <widget class="QComboBox" name="comboBox">
+       <item>
+        <property name="text">
+         <string>Info</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Warning</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Error</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="10" column="0">
+      <widget class="QPushButton" name="addPoint">
+       <property name="text">
+        <string>add point</string>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="0">
+      <widget class="QPushButton" name="pushButton_15">
+       <property name="text">
+        <string>get robot ip</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="label_1">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="25" column="0">
+      <widget class="QPushButton" name="pushButton_19">
+       <property name="text">
+        <string>execRequest</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="0">
+      <widget class="QPushButton" name="pushButton_23">
+       <property name="text">
+        <string>dis regist xservice</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QPushButton" name="pushButton_5">
+       <property name="text">
+        <string>pers list</string>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="0">
+      <widget class="QPushButton" name="pushButton_16">
+       <property name="text">
+        <string>get robot type</string>
+       </property>
+      </widget>
+     </item>
+     <item row="31" column="0">
+      <widget class="QPushButton" name="btnBeforeInstall">
+       <property name="text">
+        <string>beforeInstall</string>
+       </property>
+      </widget>
+     </item>
+     <item row="31" column="1">
+      <widget class="QPushButton" name="btnUnInstall">
+       <property name="text">
+        <string>unInstall</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="2">
+    <widget class="QWidget" name="sdkWidget" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>SDK Interface</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="3" column="0">
+          <widget class="QPushButton" name="sdkStopJog">
+           <property name="text">
+            <string>stopJog</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="sdkStartJog">
+           <property name="text">
+            <string>startJog</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="sdkbtnPower">
+           <property name="text">
+            <string>power</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QPushButton" name="sdkMoveStart">
+           <property name="text">
+            <string>movestart</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QPushButton" name="sdkbtnOperate">
+           <property name="text">
+            <string>operate</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QPushButton" name="sdlMoveStop">
+           <property name="text">
+            <string>movestop</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
