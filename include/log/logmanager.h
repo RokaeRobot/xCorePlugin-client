@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * Copyright (c) 2025 ROKAE (Beijing) Technology Co., Ltd. All Rights Reserved.
  *
  * Information in this file is the intellectual property of Rokae Technology Co., Ltd,
@@ -115,27 +115,40 @@ class XPLUGIN_EXPORT PluginLogFileManager : public QObject
 public:
     static PluginLogFileManager& instance();
 
-    // 获取合适的日志文件名（考虑大小限制）
+    // 获取合适的日志文件名，内部会按日期和文件大小自动滚动。
     QString getProperLogFileName(const QString& file_name_prefix, const QString& file_name_suffix);
 
-    // 更新文件大小并检查是否需要滚动
+    // 更新当前日志文件大小，并在总日志大小超过上限时触发旧日志清理。
     void updateFileSize(const QString& fileName, qint64 additionalSize);
-    // 构建文件名辅助函数
+
+    // 构建日志文件名：prefix_yyyyMMdd.log 或 prefix_yyyyMMdd_index.log。
     QString buildFileName(const QString& prefix, const QString& dateStr, int index, const QString& suffix);
+
+    // 写日志失败时的兜底恢复：即使总量未超限，也会尝试删除至少一个旧日志。
+    void recoverFromWriteFailure(const QString& file_name_prefix);
 
 private:
     PluginLogFileManager(QObject* parent = nullptr);
     ~PluginLogFileManager() = default;
 
-    // 清理旧文件
-    void cleanupOldFiles(const QString &dirPath);
+    // 第一次写日志时扫描现有日志，避免只统计本次进程新写入的文件。
+    void initializeLogRoot(const QString& file_name_prefix);
+
+    // 重新统计 xplugin 日志根目录下所有 *.log 文件的总大小。
+    void rescanTotalLogSize(const QString& logRootPath);
+
+    // 清理旧日志。
+    // targetTotalSize：希望清理到的目标总量；
+    // forceDeleteOne：用于写失败恢复，保证至少尝试删除一个最旧日志。
+    void cleanupOldFiles(const QString &dirPath, qint64 targetTotalSize, bool forceDeleteOne);
 
 private:
     QMutex m_mutex;
+    bool m_logRootInitialized;
     QList<QString> m_moduleList;
-    QMap<QString, int> m_currentFileIndex; // 每个日志类型对应的当前文件索引
-    QMap<QString, qint64> m_currentFileSize; // 每个日志类型对应的当前文件大小
-    qint64 m_totalLogSize; // 所有日志文件总大小
+    QMap<QString, int> m_currentFileIndex; // 每个日志模块当天正在写入的滚动文件索引
+    QMap<QString, qint64> m_currentFileSize; // 每个日志模块当天正在写入的文件大小
+    qint64 m_totalLogSize; // xplugin 日志根目录下所有 *.log 文件的总大小
 };
 
 /**
@@ -193,6 +206,7 @@ private:
     //debug for save text
     QDebug m_f_debug;
     QString m_file_name;
+    QString m_file_name_prefix;
 };
 
 /**

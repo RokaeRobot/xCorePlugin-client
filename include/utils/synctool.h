@@ -2,11 +2,10 @@
 #define SYNCTOOL_H
 
 #include <QObject>
-
+#include "xplugin_global.h"
 class QProcess;
 class QProgressDialog;
 class QEventLoop;
-#include "xplugin_global.h"
 
 namespace xplugin {
 class XPLUGIN_EXPORT SyncTool : public QObject
