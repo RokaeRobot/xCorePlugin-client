@@ -113,6 +113,6 @@ LIBS += -L$$PWD/lib/windows -lxplugin
 
 ## License
 
-本仓库遵循 **GNU Lesser General Public License v2.1**，详见 [LICENSE](./LICENSE)。
+本仓库遵循 **Apache-2.0 License**，详见 [LICENSE](./LICENSE)。
 
 > Copyright (C) ROKAE (Beijing) Technology Co., LTD.
