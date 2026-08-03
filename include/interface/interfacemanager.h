@@ -188,7 +188,9 @@ public:
     // 由当前点新建点位变量 (关节-笛卡尔)
     bool addCurrentPoint(const QString& pointName, bool isJoint,  const QString& toolName, const QString& wobjName);
 
-    // 获取工程列表
+    // 获取当前工程名
+    QString getCurProject();
+    // 获取工程列表  workspace/<robot_id>/names
     QStringList getProjectList();
     // 创建一个默认工程
     int createProject(const QString& projectName, const QString &desc = "", bool isUsed = false);

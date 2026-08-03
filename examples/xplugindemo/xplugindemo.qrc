@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/xplugindemo">
         <file>language/xplugindemo_cn.qm</file>
+        <file>render/demo_xmate.qss</file>
     </qresource>
 </RCC>

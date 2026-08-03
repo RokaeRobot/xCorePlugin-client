@@ -1,0 +1,224 @@
+/* xplugindemo UI — aligned with xMate setting page */
+
+DemoShell {
+    background-color: #F5F5F5;
+    font: 9pt "Microsoft YaHei UI";
+}
+
+QWidget#demoPageRoot {
+    background-color: #F5F5F5;
+}
+
+QWidget#demoOpsHost {
+    background: transparent;
+}
+
+QScrollArea#demoOpsScroll {
+    background: transparent;
+    border: none;
+}
+
+/* ---- Nav ---- */
+QListWidget#demoNavList {
+    background-color: #efefef;
+    border: none;
+    border-right: 1px solid #e1e1e1;
+    outline: 0;
+    font: 9pt "Microsoft YaHei UI";
+    padding: 8px 6px;
+}
+
+QListWidget#demoNavList::item {
+    min-height: 40px;
+    padding: 8px 12px;
+    margin: 2px 4px;
+    border-radius: 6px;
+    color: #3B3B3B;
+}
+
+QListWidget#demoNavList::item:hover {
+    background-color: #e4e4e4;
+}
+
+QListWidget#demoNavList::item:selected {
+    background-color: #007cf9;
+    color: #ffffff;
+}
+
+QStackedWidget#demoPageStack {
+    background-color: #F5F5F5;
+}
+
+/* ---- Cards (QFrame, not QGroupBox) ---- */
+QFrame#demoCard {
+    background-color: #ffffff;
+    border: 1px solid #e1e1e1;
+    border-radius: 12px;
+}
+
+QLabel#demoCardTitle {
+    color: #091C36;
+    font: 11pt "Microsoft YaHei UI";
+    font-weight: bold;
+    padding: 0 0 4px 0;
+    background: transparent;
+    border: none;
+}
+
+/* ---- Compact action button + description ---- */
+QWidget#demoActionRow {
+    background: transparent;
+}
+
+QPushButton#demoActionBtn,
+QPushButton[func="operation"] {
+    border: none;
+    border-radius: 14px;
+    color: transparent;
+    background-color: #D3DCE6;
+    min-height: 28px;
+    max-height: 28px;
+    min-width: 28px;
+    max-width: 28px;
+    padding: 0;
+}
+
+QPushButton#demoActionBtn:hover,
+QPushButton[func="operation"]:hover {
+    background-color: #c5d0dc;
+}
+
+QPushButton#demoActionBtn:pressed,
+QPushButton[func="operation"]:pressed {
+    background-color: #224D75;
+}
+
+/* Draggable split between ops and result */
+QSplitter#demoPageSplitter::handle:horizontal {
+    background-color: #e1e1e1;
+    width: 6px;
+    margin: 0 2px;
+}
+
+QSplitter#demoPageSplitter::handle:horizontal:hover {
+    background-color: #007cf9;
+}
+
+QWidget#demoActionText {
+    background: transparent;
+}
+
+QLabel#demoActionApi {
+    color: #091C36;
+    font: 8pt "Consolas", "Microsoft YaHei UI";
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    padding: 0 2px;
+}
+
+QLabel#demoActionDesc {
+    color: #567C9F;
+    font: 8pt "Microsoft YaHei UI";
+    background: transparent;
+    border: none;
+    padding: 0 2px;
+}
+
+QPushButton[func="primary"] {
+    border: none;
+    border-radius: 6px;
+    color: #ffffff;
+    background-color: #224D75;
+    min-height: 32px;
+    min-width: 72px;
+    padding: 4px 14px;
+    font: 9pt "Microsoft YaHei UI";
+    text-align: center;
+}
+
+QPushButton[func="primary"]:hover {
+    background-color: #2a5f8f;
+}
+
+QPushButton[func="primary"]:pressed {
+    background-color: #D9E6F2;
+    color: #091C36;
+}
+
+/* ---- Inputs ---- */
+QLineEdit, QSpinBox, QComboBox {
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    min-height: 32px;
+    padding: 2px 8px;
+    background: #ffffff;
+    font: 9pt "Microsoft YaHei UI";
+    color: #1e1e1e;
+    selection-background-color: #007cf9;
+}
+
+QLineEdit:focus, QSpinBox:focus, QComboBox:focus {
+    border: 1px solid #0077d5;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 22px;
+}
+
+QLabel {
+    font: 9pt "Microsoft YaHei UI";
+    color: #3B3B3B;
+    background: transparent;
+}
+
+QLabel[func="title_h2"] {
+    font: 11pt "Microsoft YaHei UI";
+    font-weight: bold;
+    color: #091C36;
+}
+
+QLabel[func="hint"] {
+    color: #567C9F;
+    font: 9pt "Microsoft YaHei UI";
+    padding: 6px 2px;
+}
+
+QScrollArea {
+    border: none;
+    background: transparent;
+}
+
+/* ---- Result ---- */
+QWidget#ApiResultPanel {
+    background-color: #ffffff;
+    border: 1px solid #e1e1e1;
+    border-radius: 12px;
+}
+
+QPlainTextEdit#demoResultEdit {
+    background-color: #f7f9fb;
+    color: #1e1e1e;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 10px;
+    font: 9pt "Consolas", "Microsoft YaHei UI";
+    selection-background-color: #007cf9;
+}
+
+QScrollBar:vertical {
+    background: transparent;
+    width: 8px;
+    margin: 2px;
+}
+
+QScrollBar::handle:vertical {
+    background: #c5c5c5;
+    min-height: 24px;
+    border-radius: 4px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0;
+}

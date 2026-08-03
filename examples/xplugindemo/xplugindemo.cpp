@@ -1,21 +1,25 @@
 ﻿#include "xplugindemo.h"
-#include "plugincommon.h"
+
 #include "interface/interfacemanager.h"
-#include "rl/rlmanager.h"
+#include "log/logmanager.h"
+#include "plugincommon.h"
 #include "rl/rlcustominsertwidget.h"
 #include "rl/rlcustompropretywidget.h"
-#include "log/logmanager.h"
+#include "rl/rlmanager.h"
+
 #include <QPushButton>
 
 XPLUGIN_REGISTER(PLUGIN_NAME, XPluginDemo)
 
 xplugin::XPluginDemo::XPluginDemo(QObject *parent)
     : xplugin::PluginBase(parent)
+    , m_shell(nullptr)
+    , m_bar(nullptr)
+    , m_expandWidget(nullptr)
+    , m_rlManager(nullptr)
 {
     ILOG << "XPluginDemo()";
-
     setDefaultGlobalSheet(false);
-
     setPluginLabel(tr("test demo"));
 }
 
@@ -23,94 +27,97 @@ void xplugin::XPluginDemo::init()
 {
     ILOG << "XPluginDemo::init()";
 
-//    QString path = ":/xplugindemo/language/xplugindemo1.qm";
-//    xplugin::RegistLanguage(PLUGIN_NAME, xplugin::enLanguage::Chinese, path);
-
-    connect(&xplugin::xPluginInterface(), &xplugin::InterfaceManager::sigNetworkConnect, this, [=](){
-       qDebug() << "xplugin::XPluginDemo : Connect";
+    connect(&xplugin::xPluginInterface(), &xplugin::InterfaceManager::sigNetworkConnect, this, [=]() {
+        qDebug() << "xplugin::XPluginDemo : Connect";
+    });
+    connect(&xplugin::xPluginInterface(), &xplugin::InterfaceManager::sigNetworkDisConnect, this, [=](bool) {
+        qDebug() << "xplugin::XPluginDemo : DisConnect";
     });
 
-    connect(&xplugin::xPluginInterface(), &xplugin::InterfaceManager::sigNetworkDisConnect, this, [=](bool status){
-       qDebug() << "xplugin::XPluginDemo : DisConnect";
-    });
+    // 中心页
+    m_shell = new DemoShell;
+    xplugin::CreateCenterWidget(PLUGIN_NAME, m_shell);
 
-    ILOG << "XPluginDemo::init()";
-    m_widget = new ShowWidget;
-    xplugin::CreateCenterWidget(PLUGIN_NAME, m_widget);
-
+    // 状态栏
     m_bar = new ShowStatusBar;
     xplugin::CreateStatusBar(PLUGIN_NAME, m_bar, 1);
+    m_bar->updateText(tr("current progress"));
 
+    // 右侧拓展
     m_expandWidget = new ExpandWidget;
     xplugin::CreateRightExpandWidgte(PLUGIN_NAME, m_expandWidget);
 
-    QPushButton *btn = new QPushButton("ExpandRightWidget");
-    connect(btn, &QPushButton::clicked, this, [](){
-        ELOG << "xplugin::SwitchRightExpandWidgte(PLUGIN_NAME)";
+    QPushButton *btn = new QPushButton(tr("Expand Panel"));
+    btn->setObjectName(QStringLiteral("statusExpandBtn"));
+    btn->setCursor(Qt::PointingHandCursor);
+    btn->setMinimumHeight(28);
+    btn->setStyleSheet(QStringLiteral(
+        "QPushButton#statusExpandBtn {"
+        "  border: none; border-radius: 4px;"
+        "  color: #ffffff; background-color: #224D75;"
+        "  min-height: 28px; padding: 2px 12px;"
+        "  font: 9pt \"Microsoft YaHei UI\";"
+        "}"
+        "QPushButton#statusExpandBtn:hover { background-color: #2a5f8f; }"
+        "QPushButton#statusExpandBtn:pressed {"
+        "  background-color: #D9E6F2; color: #091C36;"
+        "}"
+    ));
+    connect(btn, &QPushButton::clicked, this, []() {
         xplugin::SwitchRightExpandWidgte(PLUGIN_NAME);
     });
-
     xplugin::CreateStatusBar(PLUGIN_NAME, btn, 2);
-
-    m_bar = new ShowStatusBar;
-    xplugin::CreateStatusBar(PLUGIN_NAME, m_bar, 1);
-
-    m_bar->updateText(tr("current proress"));
 
     QList<xplugin::PhysicalButton> left_buttons;
     QList<xplugin::PhysicalButton> right_buttons;
-
-    for(int i = 0; i < 6 ;i++){
+    for (int i = 0; i < 6; ++i) {
         xplugin::PhysicalButton phyBtnLeft;
         phyBtnLeft.text = tr("PhyBtnLeft%1").arg(i);
-        phyBtnLeft.untouched_icon = QString("");
-        phyBtnLeft.touched_icon = QString("");;
-        phyBtnLeft.exec_function = [i](bool is_pressed){
-            qDebug() << QString("btn left %1 Click!").arg(i);
+        phyBtnLeft.untouched_icon = QString();
+        phyBtnLeft.touched_icon = QString();
+        phyBtnLeft.exec_function = [i](bool) {
+            qDebug() << QStringLiteral("btn left %1 Click!").arg(i);
         };
         left_buttons.append(phyBtnLeft);
     }
-
-    for(int i = 0; i < 6 ;i++){
+    for (int i = 0; i < 6; ++i) {
         xplugin::PhysicalButton phyBtnRight;
         phyBtnRight.text = tr("phyBtnRight%1").arg(i);
-        phyBtnRight.untouched_icon = QString("");
-        phyBtnRight.touched_icon = QString("");;
-        phyBtnRight.exec_function = [i](bool is_pressed){
-            qDebug() << QString("btn right %1 Click!").arg(i);
+        phyBtnRight.untouched_icon = QString();
+        phyBtnRight.touched_icon = QString();
+        phyBtnRight.exec_function = [i](bool) {
+            qDebug() << QStringLiteral("btn right %1 Click!").arg(i);
         };
         right_buttons.append(phyBtnRight);
     }
-
     xplugin::CreatePhyButtonList(PLUGIN_NAME, PLUGIN_NAME, left_buttons, right_buttons);
     xplugin::ChangePhyButtonStatus(PLUGIN_NAME, PLUGIN_NAME, true);
-
 }
 
 void xplugin::XPluginDemo::afterInit()
 {
-    // 初始化 RL 辅助编程指令
+    // RL
     m_rlManager = new xplugin::RLManager(this);
-
-    m_rlManager->createTypeKey("Custom");
-    m_rlManager->createSkeleton("Custom", "Custom");
-    m_rlManager->createInsDescribe("Custom", tr("Describe"));
-    m_rlManager->createPattern("Custom", QString("^\\s*%1\\s*(?://.*)?$").arg("Custom"));
-    m_rlManager->createInsDefault("Custom", "Custom 100,101");
-    m_rlManager->createPropertyWidget("Custom", [](){return new xplugin::RLCustomPropretyWidget("Custom");});
-    m_rlManager->createInsertWidget("Custom", [](){return new xplugin::RLCustomInsertWidget("Custom");});
-    // 增加Group
-    m_rlManager->createTypeToGroup("demo", "Custom");
-
-    m_rlManager->createGroups(tr("demo group"), "demo");
+    m_rlManager->createTypeKey(QStringLiteral("Custom"));
+    m_rlManager->createSkeleton(QStringLiteral("Custom"), QStringLiteral("Custom"));
+    m_rlManager->createInsDescribe(QStringLiteral("Custom"), tr("Describe"));
+    m_rlManager->createPattern(QStringLiteral("Custom"),
+                               QStringLiteral("^\\s*%1\\s*(?://.*)?$").arg(QStringLiteral("Custom")));
+    m_rlManager->createInsDefault(QStringLiteral("Custom"), QStringLiteral("Custom 100,101"));
+    m_rlManager->createPropertyWidget(QStringLiteral("Custom"), []() {
+        return new xplugin::RLCustomPropretyWidget(QStringLiteral("Custom"));
+    });
+    m_rlManager->createInsertWidget(QStringLiteral("Custom"), []() {
+        return new xplugin::RLCustomInsertWidget(QStringLiteral("Custom"));
+    });
+    m_rlManager->createTypeToGroup(QStringLiteral("demo"), QStringLiteral("Custom"));
+    m_rlManager->createGroups(tr("demo group"), QStringLiteral("demo"));
 }
 
 void xplugin::XPluginDemo::idle()
 {
-
 }
 
 void xplugin::XPluginDemo::render()
 {
-
 }

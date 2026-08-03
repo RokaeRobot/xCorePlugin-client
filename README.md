@@ -8,7 +8,7 @@
 
 ### 机器人控制器 / 客户端
 
-- **xCore >= v3.2.2**（当前开发包版本：**v1.0.2.6**，详见 [CHANGELOG.md](./CHANGELOG.md)）
+- **xCore >= v3.2.2**（当前开发包版本：**v1.0.2.7**，详见 [CHANGELOG.md](./CHANGELOG.md)）
 
 ### 开发环境
 
@@ -35,12 +35,12 @@ git clone https://github.com/RokaeRobot/xCorePlugin-client.git
 cd xCorePlugin-client
 ```
 
-2. **确认 SDK 版本** — 须与 Release 版本一致（当前为 **v1.0.2.6**，见 [CHANGELOG.md](./CHANGELOG.md)）。
+2. **确认 xplugin 版本** — 须与 Release 版本一致（当前为 **v1.0.2.7**，见 [CHANGELOG.md](./CHANGELOG.md)）。
 
-3. **打开对应 Release 页面** — [Release v1.0.2.6](https://github.com/RokaeRobot/xCorePlugin-client/releases/tag/v1.0.2.6)  
+3. **打开对应 Release 页面** — [Release v1.0.2.7](https://github.com/RokaeRobot/xCorePlugin-client/releases/tag/v1.0.2.7)  
    链接格式：`https://github.com/RokaeRobot/xCorePlugin-client/releases/tag/v{VERSION}`
 
-4. **下载** `xCorePlugin_v{version}.zip`（例如 `xCorePlugin_v1.0.2.6.zip`）。
+4. **下载** `xCorePlugin_v{version}.zip`（例如 `xCorePlugin_v1.0.2.7.zip`）。
 
 5. **解压到仓库约定目录**，使预编译库落入：
 
