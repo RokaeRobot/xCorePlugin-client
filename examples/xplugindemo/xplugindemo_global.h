@@ -1,4 +1,4 @@
-#ifndef XPLUGINDEMO_GLOBAL_H
+﻿#ifndef XPLUGINDEMO_GLOBAL_H
 #define XPLUGINDEMO_GLOBAL_H
 
 #include <QtCore/qglobal.h>
