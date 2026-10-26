@@ -23,7 +23,7 @@ if (contains(DEFINES, WIN64)) {
     } else {
         LIBS += -L$$PWD/../../lib/aarch64 -l:xplugin.so
     }
-    QMAKE_LFLAGS += "-Wl,-rpath,\'$$ORIGIN\'"
+    QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN\'"
     CONFIG += plugin
 }
 

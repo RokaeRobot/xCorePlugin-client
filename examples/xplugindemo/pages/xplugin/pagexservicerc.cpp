@@ -6,6 +6,7 @@
 #include "interface/interfacemanager.h"
 
 #include <QFormLayout>
+#include <QJsonObject>
 #include <QLineEdit>
 #include <QTimer>
 
@@ -24,6 +25,7 @@ PageXServiceRc::PageXServiceRc(QWidget *parent)
     QLineEdit *edRcCmd = new QLineEdit(QStringLiteral("body.get_DH_params"), this);
     QLineEdit *edRcFull = new QLineEdit(QStringLiteral("robot.frame.get_current"), this);
     QLineEdit *edServiceCb = new QLineEdit(QStringLiteral("project.tasks_pointer"), this);
+    QLineEdit *edRcNotify = new QLineEdit(QStringLiteral("project.rl_task.notify_run_params"), this);
 
     QWidget *gParam = layout.addGroup(tr("Parameters"));
     {
@@ -37,6 +39,7 @@ PageXServiceRc::PageXServiceRc(QWidget *parent)
         form->addRow(tr("RC command"), edRcCmd);
         form->addRow(tr("RC full"), edRcFull);
         form->addRow(tr("Callback serviceKey"), edServiceCb);
+        form->addRow(tr("RC notifyPath"), edRcNotify);
         qobject_cast<QVBoxLayout *>(gParam->layout())->addLayout(form);
     }
 
@@ -90,6 +93,46 @@ PageXServiceRc::PageXServiceRc(QWidget *parent)
     layout.addButton(gCb, QStringLiteral("disconnectXServiceData()"), tr("Unsubscribe XService data callback."), [result, edServiceCb]() {
         const bool ok = xplugin::xPluginInterface().disconnectXServiceData(PLUGIN_NAME, edServiceCb->text());
         result->append(QStringLiteral("disconnectXServiceData"), ok, edServiceCb->text());
+    });
+
+    // ---- RC Notify test: notify_run_params.loop_mode ----
+    QWidget *gRcNotify = layout.addGroup(tr("RC Notify Test (loop_mode)"));
+    layout.addButton(gRcNotify, QStringLiteral("[1] connectRcNotify()"),
+                     tr("Subscribe RC notifyPath (default: project.rl_task.notify_run_params). When notified, the result panel shows [NOTIFY]."), [result, edRcNotify]() {
+        const bool ok = xplugin::xPluginInterface().connectRcNotify(
+            PLUGIN_NAME, edRcNotify->text(),
+            [result](const QVariant &data) {
+                result->appendInfo(tr("[NOTIFY] Run params changed: %1")
+                                       .arg(demoVariantToString(data)));
+            });
+        result->append(QStringLiteral("connectRcNotify"), ok, edRcNotify->text());
+        if (ok) {
+            result->appendInfo(tr("Next: click [2] to toggle loop_mode"));
+        }
+    });
+    layout.addButton(gRcNotify, QStringLiteral("[2] Trigger: toggle loop_mode"),
+                     tr("Send project.rl_task.set_run_params and flip loop_mode. If the controller echoes notify_run_params, [NOTIFY] appears (root QVariant may be <invalid>, which is expected)."), [result]() {
+        static bool s_loop = true;
+        s_loop = !s_loop;
+        QJsonObject data;
+        data.insert(QStringLiteral("loop_mode"), s_loop);
+        const bool ok = xplugin::xPluginInterface().rcRequest(
+            QStringLiteral("project"), QStringLiteral("rl_task.set_run_params"), data);
+        result->append(QStringLiteral("set_run_params(loop_mode)"), ok,
+                       QStringLiteral("loop_mode=%1").arg(s_loop ? QStringLiteral("true")
+                                                                 : QStringLiteral("false")));
+        result->appendInfo(tr("Waiting for controller [NOTIFY] (if supported)"));
+    });
+    layout.addButton(gRcNotify, QStringLiteral("[3] get_run_params (pull)"),
+                     tr("Pull current run params via response (not notify)."), [result]() {
+        const QJsonValue val = xplugin::xPluginInterface().rcExecRequest(
+            QStringLiteral("project"), QStringLiteral("rl_task.get_run_params"), QJsonValue());
+        result->append(QStringLiteral("get_run_params"), true, demoJsonToString(val));
+    });
+    layout.addButton(gRcNotify, QStringLiteral("[4] disconnectRcNotify()"),
+                     tr("Unsubscribe RC notify callback; after disconnect, triggering should no longer show [NOTIFY]."), [result, edRcNotify]() {
+        const bool ok = xplugin::xPluginInterface().disconnectRcNotify(PLUGIN_NAME, edRcNotify->text());
+        result->append(QStringLiteral("disconnectRcNotify"), ok, edRcNotify->text());
     });
 
     QWidget *gCustom = layout.addGroup(tr("commandCustomData"));

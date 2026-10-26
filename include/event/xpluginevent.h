@@ -48,6 +48,7 @@ enum XPluginEventType {
     RCRunStop           = 0x4022,   // 程序停止运行信号
     RCBeforeRunStart    = 0x4023,   // 程序启动运行前信号
     RCBeforeRunStop     = 0x4024,   // 程序停止运行前信号
+    RCNotifyDataChange  = 0x4031,   // RC notify 数据变化（通用）
 
 
     // ==================== UI 事件 (0x5000 - 0x5FFF) ====================

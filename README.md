@@ -1,118 +1,61 @@
-# xCore 客户端插件开发包（HMI Plugin SDK）
+# ROKAE xCore项目客户端插件开发包
 
-面向 **ROKAE xCore 客户端（HMI）** 的二次开发软件包。基于本 SDK，可在不修改 HMI 宿主核心的前提下，扩展工艺包界面、底部状态栏、辅助编程 / 自定义 RL 指令，并与控制器插件进行数据通信。
+> 让您轻松扩展ROKAE机器人HMI系统功能 | [English Version](#) | [问题反馈](https://github.com/your-repo/issues)
 
-仓库地址：https://github.com/RokaeRobot/xCorePlugin-client
-
-## 兼容性
-
-### 机器人控制器 / 客户端
-
-- **xCore >= v3.2.2**（当前开发包版本：**v1.0.2.7**，详见 [CHANGELOG.md](./CHANGELOG.md)）
-
-### 开发环境
-
-| 项目 | 要求 |
-|------|------|
-| 语言 | C++11 |
-| GUI | Qt **5.12+**（Widgets；不使用 QML） |
-| 构建 | qmake / Qt Creator |
-| Windows | Windows 10/11，**MSVC 2019**，x86_64 |
-| Linux | Ubuntu 18.04 等，**GCC 7.4** / aarch64 工具链 |
-
-> 为保证与宿主 **ABI** 一致，请优先使用 ROKAE+ 开发包推荐的编译器与 Qt 版本构建。
-
-## 获取预编译库
-
-本仓库包含 **头文件**、**示例工程** 与变更说明；预编译的 **xplugin** 动态库通过 GitHub **Releases** 分发（请与文档 / Tag 版本对齐）。
-
-### 获取步骤
-
-1. **克隆本仓库**
-
+## 功能描述
 ```bash
-git clone https://github.com/RokaeRobot/xCorePlugin-client.git
-cd xCorePlugin-client
+# 创建窗体
+支持用户创建在HMI应用程序中的主窗体，并将主窗体注册到工艺包栏中！
+
+# 创建底部状态栏
+支持用户创建在HMI应用程序中的底部状态栏
+
+# 创建辅助编程指令
+支持用户创建在HMI应用程序中的辅助编程指令组，以及自定义指令
+
+# 客户端插件与控制器插件通信
+支持用户与自定义好的控制器插件进行数据通信
+
+# xCore数据获取
+支持用户通过封装好的接口获取xCore数据，同时支持用户通过配置好的指令结构获取xCore的数据。
 ```
 
-2. **确认 xplugin 版本** — 须与 Release 版本一致（当前为 **v1.0.2.7**，见 [CHANGELOG.md](./CHANGELOG.md)）。
+## 🚀 快速开始
+（本示例以Qt5.12 和 C++11 标准为基础向用户展示）
 
-3. **打开对应 Release 页面** — [Release v1.0.2.7](https://github.com/RokaeRobot/xCorePlugin-client/releases/tag/v1.0.2.7)  
-   链接格式：`https://github.com/RokaeRobot/xCorePlugin-client/releases/tag/v{VERSION}`
-
-4. **下载** `xCorePlugin_v{version}.zip`（例如 `xCorePlugin_v1.0.2.7.zip`）。
-
-5. **解压到仓库约定目录**，使预编译库落入：
-
-```text
-xCorePlugin-client/lib/
-  windows/     # xplugin.dll / xplugin.lib 等
-  aarch64/     # xplugin.so 等
+#### 第一步：新建动态库工程
+```bash
+方式1：直接使用example内部工程。
+方式2：新建动态库工程，手动引用xPlugin库，新建一个类继承PluginBase，实现子类的虚函数。
+```
+#### 第二步：注册插件
+```bash
+调用 XPLUGIN_REGISTER()宏注册插件
+```
+#### 第三步：定义插件功能
+```bash
+按照用户自定义需求实现插件功能
+```
+#### 第二步：编译插件
+```bash
+编译插件，即可获得编译好的动态库文件，可以直接插入HMI运行程序中。
 ```
 
-> 具体文件名以 Release 包内目录为准；示例工程 `examples/xplugindemo` 已按上述相对路径链接库。
+## ❓ 常见问题
 
-## 工程说明及使用方法
+***
+Q1：找不到头文件生成库失败的解决办法 <br>
+A1：尝试使用绝对路径定位xplugin库。
 
-### 目录说明
+***
+Q2：插件名重复，无法添加插件应该如何修改？ <br>
+A2：参考《开发手册》，修改PLUGIN宏作为目标的插件名，保证json文件和生成的插件文件格式符合要求！ 
 
-| 路径 | 说明 |
-|------|------|
-| `include/` | 对外头文件（PluginBase、InterfaceManager、RL、事件系统、日志等） |
-| `lib/windows` | Windows 预编译 xplugin（来自 Release） |
-| `lib/aarch64` | aarch64 Linux 预编译 xplugin（来自 Release） |
-| `examples/xplugindemo` | 完整功能示例（主窗体、状态栏、扩展侧栏、自定义 RL 等） |
-| `examples/example` | 精简示例 |
-| `CHANGELOG.md` | 版本变更记录 |
-| `LICENSE` | 开源许可证（LGPL-2.1） |
+***
+Q3：支持哪些Qt或者C++版本？ <br>
+开发工具最低要求：Qt5.12以及C++11。
 
-### 使用方法
-
-1. 使用 **Qt Creator** 打开 `examples/xplugindemo/xplugindemo.pro`（或自建动态库工程）。
-2. 配置 `INCLUDEPATH` 指向本仓库 `include/`，`LIBS` 指向对应平台的 `lib/`。
-3. 继承 **PluginBase**，使用 **XPLUGIN_REGISTER** 注册插件，并保证 `PLUGIN_NAME`、产物库名与工艺包配置中的名称一致。
-4. 编译生成 `.dll` / `.so` 后，按工艺包 **config.json** 格式打包，导入 xCore 客户端使用。
-
-#### Windows（qmake 片段）
-
-```qmake
-QT += widgets
-CONFIG += c++11 plugin no_plugin_name_prefix
-TEMPLATE = lib
-DEFINES += PLUGIN_NAME=\"MyPlugin\"
-INCLUDEPATH += $$PWD/include
-LIBS += -L$$PWD/lib/windows -lxplugin
-```
-
-#### 说明
-
-- 完整生命周期为：`init()` → `afterInit()` → `render()` → `idle()` → `detach()`。
-- 客户端插件出现在 xCore **工艺包**相关界面；安装与导入流程见在线文档「安装与使用」。
-- 示例覆盖主界面注册、底部状态栏、右侧扩展窗体、辅助编程指令组 / 自定义 RL、与控制器插件通信等能力；更多接口请查阅在线文档「接口说明」。
-
-### 与控制器插件协同
-
-客户端插件与控制器插件共同构成 **Rokae+ 插件生态**：
-
-- 控制器插件开发包：https://github.com/RokaeRobot/xCorePlugin-controller
-
-两端版本需与目标 **xCore** 版本匹配；升级前请阅读两侧仓库的变更说明。
-
-## 授权与注意
-
-- 插件加载后若提示「未授权」，请联系珞石获取正式授权，勿使用非官方渠道的授权文件。
-- 客户端 SDK、控制器 **xcore_api** 与目标控制器 / HMI 版本需对齐。
-
-## 文档
-
-更完整的快速入门、功能模块、接口说明与版本记录，请参阅在线文档：
-
-**Rokae+ 插件 → 客户端插件（HMI）**
-
-推荐阅读顺序：依赖与环境 → 制作一个简单的 HMI 插件 → 功能模块 / 接口说明 → 示例 → 安装与使用。
-
-## License
-
-本仓库遵循 **Apache-2.0 License**，详见 [LICENSE](./LICENSE)。
-
-> Copyright (C) ROKAE (Beijing) Technology Co., LTD.
+***
+Q4：插件加载成功后显示未授权应该如何处理？ <br>
+A4：联系珞石厂家。
+***
