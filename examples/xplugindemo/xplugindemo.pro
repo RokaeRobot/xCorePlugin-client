@@ -85,6 +85,8 @@ SOURCES += \
     pages/xplugin/pageprojectpointvar.cpp \
     pages/xplugin/pagerobotstatus.cpp \
     pages/xplugin/pagexservicerc.cpp \
+    rl/rlcommandcustominsertwidget.cpp \
+    rl/rlcommandcustompropretywidget.cpp \
     rl/rlcustominsertwidget.cpp \
     rl/rlcustompropretywidget.cpp \
     showstatusbar.cpp \
@@ -102,6 +104,8 @@ HEADERS += \
     pages/xplugin/pageprojectpointvar.h \
     pages/xplugin/pagerobotstatus.h \
     pages/xplugin/pagexservicerc.h \
+    rl/rlcommandcustominsertwidget.h \
+    rl/rlcommandcustompropretywidget.h \
     rl/rlcustominsertwidget.h \
     rl/rlcustompropretywidget.h \
     showstatusbar.h \
@@ -114,6 +118,8 @@ unix {
 !isEmpty(target.path): INSTALLS += target
 
 FORMS += \
+    rl/rlcommandcustominsertwidget.ui \
+    rl/rlcommandcustompropretywidget.ui \
     rl/rlcustominsertwidget.ui \
     rl/rlcustompropretywidget.ui \
     showstatusbar.ui
