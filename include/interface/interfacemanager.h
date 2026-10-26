@@ -83,6 +83,11 @@ public:
     bool connectXServiceData(const QString &pluginName, const QString &serviceKey, std::function<void(const QVariant &data)> callBack, const QString& key = "");
     bool disconnectXServiceData(const QString &pluginName, const QString &serviceKey, const QString &key = "");
 
+    // 通用数据接口 注册/取消 RC notify 回调数据  // 跨dll边界。指定编译器
+    // 用 插件名_Key 做唯一标识！
+    bool connectRcNotify(const QString &pluginName, const QString &notifyPath, std::function<void(const QVariant &data)> callBack, const QString& key = "");
+    bool disconnectRcNotify(const QString &pluginName, const QString &notifyPath, const QString &key = "");
+
     // 网络连接接口 注册网络连接成功/取消后的动作  // 跨dll边界。指定编译器
     QString connectNetworkStatus(bool isConnect, const QString &pluginName, QObject *obj, std::function<void()> callBack, const QString &id = "");
     void disconnectNetworkStatus(bool isConnect, const QString &pluginName, const QString &id = "");
@@ -177,18 +182,48 @@ public:
     // 获取注册到的变量值
     QVector<QVariant> getRegistedPERSVars();
 
-    // 获取点位名称列表
-    QStringList getPointNameList();
-    // 获取点位结构数据
-    QJsonObject getPointObjDataByName(const QString &pointName);
-    // 获取点位数据
-    QVector<double> getPointDataByName(const QString &pointName);
-    // 获取当前点位数据
-    QJsonValue getCurrentPointData(const QString& toolName = "", const QString& wobjName = "");
-    // 由当前点新建点位变量 (关节-笛卡尔)
-    bool addCurrentPoint(const QString& pointName, bool isJoint,  const QString& toolName, const QString& wobjName);
+    // ==================== 点位 CRUD（单点 + 数组元素）====================
+    // 点位数组的索引，形如 "[0][0][0]" / "[1][0][0]"；缺省按单点 [0][0][0]
 
-    // 获取当前工程名
+    // 获取当前工程全部点位名称
+    QStringList getPointNameList();
+    // 按名称获取点位完整 JSON
+    QJsonObject getPointObjDataByName(const QString &pointName);
+    // 列出点位 value 下全部数组下标键
+    QStringList getPointValueIndexList(const QString &pointName);
+    // 获取点位维度 d0/d1/d2；若无 d 节点则按 value 键数量推断
+    QVector<int> getPointDimensions(const QString &pointName);
+    // 读取指定下标的笛卡尔 xyzabc（无 pose 返回空）
+    QVector<double> getPointDataByName(const QString &pointName, const QString &valueIndex = "[0][0][0]");
+    // 读取指定下标的关节 inner_pos（固定 7 轴，不足补 0）
+    QVector<double> getPointJointDataByName(const QString &pointName, const QString &valueIndex = "[0][0][0]");
+    // 读取当前机器人位姿（关节/笛卡尔，依赖 tool/wobj）
+    QJsonValue getCurrentPointData(const QString& toolName = "", const QString& wobjName = "");
+    // 读取指定下标的工具/工件名：返回 {"tool":..., "wobj":...}；无该点/该格/无 coord 返回空对象
+    QJsonObject getPointCoord(const QString &pointName, const QString &valueIndex = "[0][0][0]");
+    // 修改指定下标的工具/工件名：只改 coord.tool/coord.wobj，不动 pose/inner_pos；关节点拒绝
+    bool setPointCoord(const QString &pointName, const QString &valueIndex = "[0][0][0]",
+                                                  const QString &toolName = "", const QString &wobjName = "");
+
+    // 创建单点空壳（仅 [0][0][0]）；点位已存在返回 false
+    bool createPoint(const QString &pointName, bool isJoint, bool isPers = false);
+    // 确保数组在指定下标存在元素, 确保指定下标存在：已有则直接成功；没有则从第一个已有格子拷贝结构（或建空格）
+    // 规范化点位 valueIndex 下标 空串 -> [0][0][0]；只有一维 [i] -> [i][0][0]；两维 [i][j] -> [i][j][0]
+    bool ensurePointElement(const QString &pointName, const QString &valueIndex);
+
+    // 把当前位姿写入指定下标；多维点只更新该格，禁止整表重建
+    bool addCurrentPoint(const QString& pointName, bool isJoint, const QString& toolName, const QString& wobjName, const QString &valueIndex = "[0][0][0]");
+    // 写入指定下标的笛卡尔坐标（绝对值 xyzabc，长度需 >= 6）
+    bool setPointCartData(const QString &pointName, const QVector<double> &xyz_abc, const QString &valueIndex = "[0][0][0]");
+    // 写入指定下标的关节角（inner_pos，最多写 7 轴）
+    bool setPointJointData(const QString &pointName, const QVector<double> &joints, const QString &valueIndex = "[0][0][0]");
+    // 用 JSON 整格覆盖指定下标元素（高级接口）
+    bool setPointElementJson(const QString &pointName, const QString &valueIndex, const QJsonObject &cellJson);
+    // 删除整个点位（含热删除与 point.json 推送）
+    bool removePoint(const QString &pointName);
+    // 删除数组中一个下标；若只剩一格则等价 removePoint
+    bool removePointElement(const QString &pointName, const QString &valueIndex);
+
     QString getCurProject();
     // 获取工程列表  workspace/<robot_id>/names
     QStringList getProjectList();
@@ -208,9 +243,6 @@ public:
     void moveToStart(int &errCode, const QString &pointNameTo, int speed, bool isMoveJ);
     void moveToStart(int &errCode, const QString &pointNameTo, int speed, bool confCheck, bool isMoveJ);
     void moveToStop();
-
-    // 修改笛卡尔下的点位值
-    void changeCartPoint(const QString& pointName, const QVector<double>& xyz_abc);
 
     // 获取所有的IO名称列表以及值
     QHash<QString, QVariant> getIOHash();
@@ -239,6 +271,8 @@ InterfaceManager XPLUGIN_EXPORT &xPluginInterface();
 QString XPLUGIN_EXPORT GetPluginVersion();
 // 创建中心窗体
 int XPLUGIN_EXPORT CreateCenterWidget(const QString &pluginName, QWidget *widget);
+// 获取无独立页面窗体
+int XPLUGIN_EXPORT GetPluginNoUniqueWidget(const QString &pluginName, QWidget *&widget);
 // 创建状态栏
 int XPLUGIN_EXPORT CreateStatusBar(const QString &pluginName, QWidget *widget, int index = 1);
 // 创建常驻窗体

@@ -23,6 +23,8 @@ ui_*.h
 Makefile*
 *build-*
 
+*docs/*
+
 *example/*.dll
 *example/*.lib
 *example/*.exp

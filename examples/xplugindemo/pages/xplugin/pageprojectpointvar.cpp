@@ -6,6 +6,8 @@
 #include "interface/interfacemanager.h"
 
 #include <QFormLayout>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QLineEdit>
 #include <QSpinBox>
 
@@ -16,6 +18,7 @@ PageProjectPointVar::PageProjectPointVar(QWidget *parent)
     ApiResultPanel *result = layout.result;
 
     QLineEdit *edPoint = new QLineEdit(QStringLiteral("demo_p1"), this);
+    QLineEdit *edValueIndex = new QLineEdit(QStringLiteral("[0][0][0]"), this);
     QLineEdit *edTool = new QLineEdit(QStringLiteral("tool0"), this);
     QLineEdit *edWobj = new QLineEdit(QStringLiteral("wobj0"), this);
     QLineEdit *edVar = new QLineEdit(QStringLiteral("demo_num"), this);
@@ -31,6 +34,7 @@ PageProjectPointVar::PageProjectPointVar(QWidget *parent)
     {
         QFormLayout *form = new QFormLayout;
         form->addRow(tr("Point name"), edPoint);
+        form->addRow(tr("Point value index"), edValueIndex);
         form->addRow(tr("Tool"), edTool);
         form->addRow(tr("Wobj"), edWobj);
         form->addRow(tr("Variable name (non-PERS)"), edVar);
@@ -219,29 +223,187 @@ PageProjectPointVar::PageProjectPointVar(QWidget *parent)
     });
 
     QWidget *gPoint = layout.addGroup(tr("Point"));
+    // ---- 查询（对齐 InterfaceManager 点位 CRUD）----
     layout.addButton(gPoint, QStringLiteral("getPointNameList()"), tr("List point names."), [result]() {
         result->append(QStringLiteral("getPointNameList"), true,
                        demoStringListToString(xplugin::xPluginInterface().getPointNameList()));
     });
     layout.addButton(gPoint, QStringLiteral("getPointObjDataByName()"), tr("Get point JSON by name."), [result, edPoint]() {
         const QJsonObject obj = xplugin::xPluginInterface().getPointObjDataByName(edPoint->text());
-        result->append(QStringLiteral("getPointObjDataByName"), !obj.isEmpty(), demoJsonToString(obj));
+        QStringList keys;
+        const QJsonObject value = obj.value(QStringLiteral("value")).toObject();
+        foreach (const QString &k, value.keys()) {
+            if (k.startsWith(QLatin1Char('['))) {
+                keys.append(k);
+            }
+        }
+        result->append(QStringLiteral("getPointObjDataByName"), !obj.isEmpty(),
+                       QStringLiteral("property=%1 valueKeys=%2 | %3")
+                           .arg(obj.value(QStringLiteral("property")).toString(),
+                                keys.join(QLatin1Char(',')),
+                                demoJsonToString(obj)));
     });
-    layout.addButton(gPoint, QStringLiteral("getPointDataByName()"), tr("Get point numeric data."), [result, edPoint]() {
-        const QVector<double> data = xplugin::xPluginInterface().getPointDataByName(edPoint->text());
-        result->append(QStringLiteral("getPointDataByName"), !data.isEmpty(), demoVectorToString(data));
+    layout.addButton(gPoint, QStringLiteral("getPointValueIndexList()"),
+                     tr("List value indexes of a point array."), [result, edPoint]() {
+        const QStringList keys = xplugin::xPluginInterface().getPointValueIndexList(edPoint->text());
+        result->append(QStringLiteral("getPointValueIndexList"), true, demoStringListToString(keys));
+    });
+    layout.addButton(gPoint, QStringLiteral("getPointDimensions()"),
+                     tr("Get point array dimensions d0/d1/d2."), [result, edPoint]() {
+        const QVector<int> dims = xplugin::xPluginInterface().getPointDimensions(edPoint->text());
+        QString tip;
+        for (int i = 0; i < dims.size(); ++i) {
+            if (i) tip += QLatin1Char(',');
+            tip += QString::number(dims.at(i));
+        }
+        result->append(QStringLiteral("getPointDimensions"), !dims.isEmpty(), tip);
+    });
+    layout.addButton(gPoint, QStringLiteral("getPointDataByName()"),
+                     tr("Get cart xyzabc at value index (cart points only; joint has no pose)."),
+                     [result, edPoint, edValueIndex]() {
+        const QString name = edPoint->text();
+        const QString idx = edValueIndex->text();
+        const QVector<double> data = xplugin::xPluginInterface().getPointDataByName(name, idx);
+        QString tip = QStringLiteral("index=%1 data=%2").arg(idx, demoVectorToString(data));
+        if (data.isEmpty()) {
+            const QJsonObject obj = xplugin::xPluginInterface().getPointObjDataByName(name);
+            tip += QStringLiteral(" | tip=need cart pose; property=%1")
+                       .arg(obj.value(QStringLiteral("property")).toString());
+        }
+        result->append(QStringLiteral("getPointDataByName"), !data.isEmpty(), tip);
+    });
+    layout.addButton(gPoint, QStringLiteral("getPointJointDataByName()"),
+                     tr("Get joint inner_pos at value index (joint points)."),
+                     [result, edPoint, edValueIndex]() {
+        const QVector<double> data = xplugin::xPluginInterface().getPointJointDataByName(
+            edPoint->text(), edValueIndex->text());
+        result->append(QStringLiteral("getPointJointDataByName"), !data.isEmpty(),
+                       QStringLiteral("index=%1 data=%2")
+                           .arg(edValueIndex->text(), demoVectorToString(data)));
     });
     layout.addButton(gPoint, QStringLiteral("getCurrentPointData()"), tr("Read current TCP pose data."), [result, edTool, edWobj]() {
         const QJsonValue v = xplugin::xPluginInterface().getCurrentPointData(edTool->text(), edWobj->text());
         result->append(QStringLiteral("getCurrentPointData"), !v.isNull() && !v.isUndefined(), demoJsonToString(v));
     });
-    layout.addButton(gPoint, QStringLiteral("addCurrentPoint(joint)"), tr("Save current pose as joint point."), [result, edPoint, edTool, edWobj]() {
-        const bool ok = xplugin::xPluginInterface().addCurrentPoint(edPoint->text(), true, edTool->text(), edWobj->text());
-        result->append(QStringLiteral("addCurrentPoint(joint)"), ok, edPoint->text());
+    layout.addButton(gPoint, QStringLiteral("getPointCoord()"),
+                     tr("Read tool/wobj name at value index (cart points)."),
+                     [result, edPoint, edValueIndex]() {
+        const QJsonObject coord = xplugin::xPluginInterface().getPointCoord(
+            edPoint->text(), edValueIndex->text());
+        result->append(QStringLiteral("getPointCoord"), !coord.isEmpty(),
+                       QStringLiteral("%1 @ %2 | %3")
+                           .arg(edPoint->text(), edValueIndex->text(), demoJsonToString(coord)));
     });
-    layout.addButton(gPoint, QStringLiteral("addCurrentPoint(cart)"), tr("Save current pose as cart point."), [result, edPoint, edTool, edWobj]() {
-        const bool ok = xplugin::xPluginInterface().addCurrentPoint(edPoint->text(), false, edTool->text(), edWobj->text());
-        result->append(QStringLiteral("addCurrentPoint(cart)"), ok, edPoint->text());
+
+    // ---- 创建 / 示教 / 写入 ----
+    layout.addButton(gPoint, QStringLiteral("createPoint(cart)"),
+                     tr("Create empty cart point shell (isJoint=false, isPers=false)."), [result, edPoint]() {
+        const bool ok = xplugin::xPluginInterface().createPoint(edPoint->text(), false, false);
+        result->append(QStringLiteral("createPoint(cart)"), ok, edPoint->text());
+    });
+    layout.addButton(gPoint, QStringLiteral("createPoint(joint)"),
+                     tr("Create empty joint point shell (isJoint=true, isPers=false)."), [result, edPoint]() {
+        const bool ok = xplugin::xPluginInterface().createPoint(edPoint->text(), true, false);
+        result->append(QStringLiteral("createPoint(joint)"), ok, edPoint->text());
+    });
+    layout.addButton(gPoint, QStringLiteral("createPoint(cart,pers)"),
+                     tr("Create empty cart PERS point shell (isPers=true)."), [result, edPoint]() {
+        const bool ok = xplugin::xPluginInterface().createPoint(edPoint->text(), false, true);
+        result->append(QStringLiteral("createPoint(cart,pers)"), ok, edPoint->text());
+    });
+    layout.addButton(gPoint, QStringLiteral("ensurePointElement()"),
+                     tr("Ensure array element exists at value index."), [result, edPoint, edValueIndex]() {
+        const bool ok = xplugin::xPluginInterface().ensurePointElement(edPoint->text(), edValueIndex->text());
+        result->append(QStringLiteral("ensurePointElement"), ok,
+                       QStringLiteral("%1 @ %2").arg(edPoint->text(), edValueIndex->text()));
+    });
+    layout.addButton(gPoint, QStringLiteral("addCurrentPoint(joint)"),
+                     tr("Save current pose as joint point (multi-dim updates one element)."),
+                     [result, edPoint, edTool, edWobj, edValueIndex]() {
+        const bool ok = xplugin::xPluginInterface().addCurrentPoint(
+            edPoint->text(), true, edTool->text(), edWobj->text(), edValueIndex->text());
+        result->append(QStringLiteral("addCurrentPoint(joint)"), ok,
+                       QStringLiteral("%1 @ %2").arg(edPoint->text(), edValueIndex->text()));
+    });
+    layout.addButton(gPoint, QStringLiteral("addCurrentPoint(cart)"),
+                     tr("Save current pose as cart point (multi-dim updates one element)."),
+                     [result, edPoint, edTool, edWobj, edValueIndex]() {
+        const bool ok = xplugin::xPluginInterface().addCurrentPoint(
+            edPoint->text(), false, edTool->text(), edWobj->text(), edValueIndex->text());
+        result->append(QStringLiteral("addCurrentPoint(cart)"), ok,
+                       QStringLiteral("%1 @ %2").arg(edPoint->text(), edValueIndex->text()));
+    });
+    layout.addButton(gPoint, QStringLiteral("setPointCartData(+1mm X)"),
+                     tr("Write cart xyzabc at value index (X+1)."), [result, edPoint, edValueIndex]() {
+        const QVector<double> cur = xplugin::xPluginInterface().getPointDataByName(
+            edPoint->text(), edValueIndex->text());
+        QVector<double> xyz_abc;
+        if (cur.size() >= 6) {
+            xyz_abc = cur;
+            xyz_abc[0] += 1.0;
+        } else {
+            xyz_abc << 1.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0;
+        }
+        const bool ok = xplugin::xPluginInterface().setPointCartData(
+            edPoint->text(), xyz_abc, edValueIndex->text());
+        result->append(QStringLiteral("setPointCartData"), ok,
+                       QStringLiteral("index=%1 xyzabc=%2")
+                           .arg(edValueIndex->text(), demoVectorToString(xyz_abc)));
+    });
+    layout.addButton(gPoint, QStringLiteral("setPointJointData(zeros)"),
+                     tr("Write joint zeros at value index."), [result, edPoint, edValueIndex]() {
+        QVector<double> joints;
+        joints << 0 << 0 << 0 << 0 << 0 << 0 << 0;
+        const bool ok = xplugin::xPluginInterface().setPointJointData(
+            edPoint->text(), joints, edValueIndex->text());
+        result->append(QStringLiteral("setPointJointData"), ok,
+                       QStringLiteral("index=%1").arg(edValueIndex->text()));
+    });
+    layout.addButton(gPoint, QStringLiteral("setPointElementJson(sample)"),
+                     tr("Overwrite one value cell by JSON (advanced)."),
+                     [result, edPoint, edValueIndex]() {
+        QJsonObject cell;
+        QJsonObject coord;
+        coord.insert(QStringLiteral("tool"), QStringLiteral("tool0"));
+        coord.insert(QStringLiteral("wobj"), QStringLiteral("wobj0"));
+        cell.insert(QStringLiteral("coord"), coord);
+        QJsonArray inner;
+        for (int i = 0; i < 7; ++i) {
+            inner.append(i == 0 ? 1.0 : 0.0);
+        }
+        cell.insert(QStringLiteral("inner_pos"), inner);
+        QJsonArray ext;
+        for (int i = 0; i < 6; ++i) {
+            ext.append(0.0);
+        }
+        cell.insert(QStringLiteral("extern_pos"), ext);
+        const bool ok = xplugin::xPluginInterface().setPointElementJson(
+            edPoint->text(), edValueIndex->text(), cell);
+        result->append(QStringLiteral("setPointElementJson"), ok,
+                       QStringLiteral("%1 @ %2 | %3")
+                           .arg(edPoint->text(), edValueIndex->text(), demoJsonToString(cell)));
+    });
+    layout.addButton(gPoint, QStringLiteral("setPointCoord(tool/wobj)"),
+                     tr("Set tool/wobj name at value index (cart points only; joint rejected)."),
+                     [result, edPoint, edValueIndex, edTool, edWobj]() {
+        const bool ok = xplugin::xPluginInterface().setPointCoord(
+            edPoint->text(), edValueIndex->text(), edTool->text(), edWobj->text());
+        result->append(QStringLiteral("setPointCoord"), ok,
+                       QStringLiteral("%1 @ %2 tool=%3 wobj=%4")
+                           .arg(edPoint->text(), edValueIndex->text(), edTool->text(), edWobj->text()));
+    });
+
+    // ---- 删除 / 校验 / 运动 ----
+    layout.addButton(gPoint, QStringLiteral("removePointElement()"),
+                     tr("Remove one array element by value index."), [result, edPoint, edValueIndex]() {
+        const bool ok = xplugin::xPluginInterface().removePointElement(edPoint->text(), edValueIndex->text());
+        result->append(QStringLiteral("removePointElement"), ok,
+                       QStringLiteral("%1 @ %2").arg(edPoint->text(), edValueIndex->text()));
+    });
+    layout.addButton(gPoint, QStringLiteral("removePoint()"),
+                     tr("Delete whole point by name."), [result, edPoint]() {
+        const bool ok = xplugin::xPluginInterface().removePoint(edPoint->text());
+        result->append(QStringLiteral("removePoint"), ok, edPoint->text());
     });
     layout.addButton(gPoint, QStringLiteral("checkPointMoveTo()"), tr("Check reachability between points."), [result, edPointFrom, edPointTo]() {
         const int ret = xplugin::xPluginInterface().checkPointMoveTo(edPointFrom->text(), edPointTo->text());
@@ -250,12 +412,6 @@ PageProjectPointVar::PageProjectPointVar(QWidget *parent)
     layout.addButton(gPoint, QStringLiteral("checkPointSame()"), tr("Check whether two points are same."), [result, edPointFrom, edPointTo]() {
         const int ret = xplugin::xPluginInterface().checkPointSame(edPointFrom->text(), edPointTo->text());
         result->append(QStringLiteral("checkPointSame"), true, QStringLiteral("ret=%1").arg(ret));
-    });
-    layout.addButton(gPoint, QStringLiteral("changeCartPoint(+1mm X)"), tr("Offset cart point X by +1mm."), [result, edPoint]() {
-        QVector<double> xyz_abc;
-        xyz_abc << 1.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0;
-        xplugin::xPluginInterface().changeCartPoint(edPoint->text(), xyz_abc);
-        result->append(QStringLiteral("changeCartPoint"), true, edPoint->text());
     });
     layout.addButton(gPoint, QStringLiteral("moveToStart()"), tr("Move to point (MoveJ sample)."), [result, edPoint, spSpeed]() {
         int err = 0;

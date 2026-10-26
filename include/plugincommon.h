@@ -1,4 +1,4 @@
-﻿#ifndef PLUGINCOMMON_H
+#ifndef PLUGINCOMMON_H
 #define PLUGINCOMMON_H
 /******************************************************************************
  * Copyright (c) 2025 ROKAE (Beijing) Technology Co., Ltd. All Rights Reserved.
@@ -126,6 +126,12 @@ public:
       * @brief get plugin Label
       */
    QString getPluginLabel() const;
+
+   /**
+     * @brief set unique plugin widget
+     */
+   void setUniqueStatus(bool status = true);
+   bool getUniqueStatus();
 
 private:
     class PluginBasePrivate;
