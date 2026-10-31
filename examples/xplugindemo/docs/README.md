@@ -252,6 +252,7 @@ IO: getIOHash / getIOValue / setIOValue / getRegisterHash ...
 
 - `HAVE_ROKAE_SDK` **默认关闭**
 - 先保证插件能挂上 HMI，再叠加Rokae+ SDK
+- SDK 获取和配置方法见 [xCore SDK 下载与配置](../3rdparty/rokaesdk/README.md)。
 
 ---
 
