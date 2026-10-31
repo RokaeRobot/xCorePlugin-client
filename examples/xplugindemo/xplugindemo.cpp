@@ -3,6 +3,8 @@
 #include "interface/interfacemanager.h"
 #include "log/logmanager.h"
 #include "plugincommon.h"
+#include "rl/rlcommandcustominsertwidget.h"
+#include "rl/rlcommandcustompropretywidget.h"
 #include "rl/rlcustominsertwidget.h"
 #include "rl/rlcustompropretywidget.h"
 #include "rl/rlmanager.h"
@@ -112,6 +114,44 @@ void xplugin::XPluginDemo::afterInit()
     });
     m_rlManager->createTypeToGroup(QStringLiteral("demo"), QStringLiteral("Custom"));
     m_rlManager->createGroups(tr("demo group"), QStringLiteral("demo"));
+
+    // RL 缺省参数与批量修改示例（dev_rl 9cb5a97）
+    m_rlManager->createTypeKey(QStringLiteral("VPosToRobPos"));
+    m_rlManager->createSkeleton(QStringLiteral("VPosToRobPos"), QStringLiteral("VPosToRobPos(VisionCodNum, VPos[, RobPos_JP]);"));
+    m_rlManager->createInsDescribe(QStringLiteral("VPosToRobPos"),
+                                   tr("Convert position information from the camera coordinate system to the workpiece coordinate system.")
+                                   + QStringLiteral("\n\n")
+                                   + QStringLiteral("robtarget = VPosToRobPos(VisionCodNum, VPos[, RobPos_JP]);"));
+    m_rlManager->createPattern(QStringLiteral("VPosToRobPos"),
+                               QStringLiteral("^\\s*%1\\s*(?://.*)?$").arg(QStringLiteral("Vision")));
+    m_rlManager->createInsDefault(QStringLiteral("VPosToRobPos"), QStringLiteral("VPosToRobPos(1, p1"));
+    m_rlManager->createPropertyWidget(QStringLiteral("VPosToRobPos"), []() {
+        return new xplugin::RLCommandCustomInsertWidget(QStringLiteral("VPosToRobPos"));
+    });
+    m_rlManager->createInsertWidget(QStringLiteral("VPosToRobPos"), []() {
+        return new xplugin::RLCommandCustomPropretyWidget(QStringLiteral("VPosToRobPos"));
+    });
+    m_rlManager->createTypeToGroup(QStringLiteral("groupVision"), QStringLiteral("VPosToRobPos"));
+    m_rlManager->createGroups(tr("Vision Server"), QStringLiteral("groupVision"));
+
+    xplugin::RlCustomCommandSpec spec;
+    spec.type = QStringLiteral("VCommandPosToRobPos");
+    spec.describe = tr("Describe");
+    spec.defaultLine = QStringLiteral("VCommandPosToRobPos(1, p1);");
+    spec.allowAssignPrefix = false;
+    spec.fields << xplugin::RlCustomField(QStringLiteral("vSwitch"), xplugin::RlFieldSwitch, xplugin::ARG_DEFAULT)
+                << xplugin::RlCustomField(QStringLiteral("vPointIndex"), xplugin::RlFieldInteger, xplugin::ARG_DEFAULT)
+                << xplugin::RlCustomField(QStringLiteral("vPos"), xplugin::RlFieldCartPoint)
+                << xplugin::RlCustomField(QStringLiteral("vSpeed"), xplugin::RlFieldSpeed)
+                << xplugin::RlCustomField(QStringLiteral("vZone"), xplugin::RlFieldZone)
+                << xplugin::RlCustomField(QStringLiteral("vTool"), xplugin::RlFieldTool)
+                << xplugin::RlCustomField(QStringLiteral("vWobj"), xplugin::RlFieldWobj)
+                << xplugin::RlCustomField(QStringLiteral("vPosJoint1"), xplugin::RlFieldJointPoint, xplugin::ARG_DEFAULT)
+                << xplugin::RlCustomField(QStringLiteral("vPosJoint2"), xplugin::RlFieldJointPoint, xplugin::ARG_DEFAULT)
+                << xplugin::RlCustomField(QStringLiteral("vPosJoint3"), xplugin::RlFieldJointPoint, xplugin::ARG_DEFAULT);
+    m_rlManager->createData(QStringLiteral("groupVision"), spec,
+        [type = spec.type]() { return new xplugin::RLCommandCustomInsertWidget(type); },
+        [type = spec.type]() { return new xplugin::RLCommandCustomPropretyWidget(type); });
 }
 
 void xplugin::XPluginDemo::idle()

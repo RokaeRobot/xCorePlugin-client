@@ -3,6 +3,10 @@ qmake/*
 
 # C++ objects and libs
 
+# Download the optional xCore SDK separately; keep only setup instructions.
+/examples/xplugindemo/3rdparty/rokaesdk/*
+!/examples/xplugindemo/3rdparty/rokaesdk/README.md
+
 # Qt-es
 object_script.*.Release
 object_script.*.Debug

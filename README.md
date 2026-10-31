@@ -8,7 +8,7 @@
 
 ### 机器人控制器 / 客户端
 
-- **xCore >= v3.2.2**（当前开发包版本：**v1.0.2.7**，详见 [CHANGELOG.md](./CHANGELOG.md)）
+- **xCore >= v3.2.2**（当前开发包版本：**v1.0.3.2**，详见 [CHANGELOG.md](./CHANGELOG.md)）
 
 ### 开发环境
 
@@ -35,12 +35,12 @@ git clone https://github.com/RokaeRobot/xCorePlugin-client.git
 cd xCorePlugin-client
 ```
 
-2. **确认 xplugin 版本** — 须与 Release 版本一致（当前为 **v1.0.2.7**，见 [CHANGELOG.md](./CHANGELOG.md)）。
+2. **确认 xplugin 版本** — 须与 Release 版本一致（当前为 **v1.0.3.2**，见 [CHANGELOG.md](./CHANGELOG.md)）。
 
-3. **打开对应 Release 页面** — [Release v1.0.2.7](https://github.com/RokaeRobot/xCorePlugin-client/releases/tag/v1.0.2.7)  
+3. **打开对应 Release 页面** — [Release v1.0.3.2](https://github.com/RokaeRobot/xCorePlugin-client/releases/tag/v1.0.3.2)  
    链接格式：`https://github.com/RokaeRobot/xCorePlugin-client/releases/tag/v{VERSION}`
 
-4. **下载** `xCorePlugin_v{version}.zip`（例如 `xCorePlugin_v1.0.2.7.zip`）。
+4. **下载** `xCorePlugin_v{version}.zip`（例如 `xCorePlugin_v1.0.3.2.zip`）。
 
 5. **解压到仓库约定目录**，使预编译库落入：
 
@@ -51,6 +51,10 @@ xCorePlugin-client/lib/
 ```
 
 > 具体文件名以 Release 包内目录为准；示例工程 `examples/xplugindemo` 已按上述相对路径链接库。
+
+### 可选：xCore SDK（xplugindemo）
+
+`examples/xplugindemo` 的 xCore SDK 功能默认关闭。启用时需单独获取 SDK，操作方法见 [xCore SDK 下载与配置](./examples/xplugindemo/3rdparty/rokaesdk/README.md)。
 
 ## 工程说明及使用方法
 

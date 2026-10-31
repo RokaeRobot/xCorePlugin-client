@@ -5,7 +5,8 @@ DEFINES += XPLUGINDEMO_LIBRARY
 
 # ---------------------------------------------------------------------------
 # Rokae SDK 附属能力: 默认关闭
-# 需要使用SDK示例时, 取消下一行注释后 qmake/编译
+# SDK 配置说明: 3rdparty/rokaesdk/README.md
+# 需要使用SDK示例时, 解开下一行的注释后 qmake/编译
 # DEFINES += HAVE_ROKAE_SDK
 # ---------------------------------------------------------------------------
 
@@ -85,6 +86,8 @@ SOURCES += \
     pages/xplugin/pageprojectpointvar.cpp \
     pages/xplugin/pagerobotstatus.cpp \
     pages/xplugin/pagexservicerc.cpp \
+    rl/rlcommandcustominsertwidget.cpp \
+    rl/rlcommandcustompropretywidget.cpp \
     rl/rlcustominsertwidget.cpp \
     rl/rlcustompropretywidget.cpp \
     showstatusbar.cpp \
@@ -102,6 +105,8 @@ HEADERS += \
     pages/xplugin/pageprojectpointvar.h \
     pages/xplugin/pagerobotstatus.h \
     pages/xplugin/pagexservicerc.h \
+    rl/rlcommandcustominsertwidget.h \
+    rl/rlcommandcustompropretywidget.h \
     rl/rlcustominsertwidget.h \
     rl/rlcustompropretywidget.h \
     showstatusbar.h \
@@ -114,6 +119,8 @@ unix {
 !isEmpty(target.path): INSTALLS += target
 
 FORMS += \
+    rl/rlcommandcustominsertwidget.ui \
+    rl/rlcommandcustompropretywidget.ui \
     rl/rlcustominsertwidget.ui \
     rl/rlcustompropretywidget.ui \
     showstatusbar.ui
