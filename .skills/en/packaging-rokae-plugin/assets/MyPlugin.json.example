@@ -1,0 +1,13 @@
+{
+  "client_plugin": {
+    "name": "MyPlugin",
+    "depend": [],
+    "ctrlDepend": [],
+    "enable": false,
+    "version": "3.0.1",
+    "min_hmi_version": "3.0.1",
+    "custom_hmi_version": [],
+    "author": "rokae",
+    "description": "description"
+  }
+}

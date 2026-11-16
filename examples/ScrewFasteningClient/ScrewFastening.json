@@ -1,0 +1,13 @@
+{
+  "client_plugin": {
+    "name": "ScrewFastening",
+    "depend": [],
+    "ctrlDepend": ["ScrewFastening"],
+    "enable": true,
+    "version": "1.0.0",
+    "min_hmi_version": "3.0.1",
+    "custom_hmi_version": [],
+    "author": "Rokae",
+    "description": "螺丝锁附工艺"
+  }
+}

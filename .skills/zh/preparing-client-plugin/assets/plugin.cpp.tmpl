@@ -1,0 +1,9 @@
+#include "{{PLUGIN_NAME_PASCAL}}.h"
+#include <QWidget>
+
+XPLUGIN_REGISTER(PLUGIN_NAME, {{PLUGIN_NAME}})
+
+void xplugin::{{PLUGIN_NAME}}::init() {
+    auto *w = new QWidget;
+    CreateCenterWidget(PLUGIN_NAME, w);
+}

@@ -1,0 +1,18 @@
+#ifndef {{PLUGIN_NAME_UPPER}}_H
+#define {{PLUGIN_NAME_UPPER}}_H
+
+#include "plugincommon.h"
+#include "interface/interfacemanager.h"
+
+namespace xplugin {
+class {{PLUGIN_NAME}} : public PluginBase {
+    Q_OBJECT
+public:
+    explicit {{PLUGIN_NAME}}(QObject *parent = nullptr) : PluginBase(parent) {
+        setPluginLabel(tr("{{PLUGIN_LABEL}}"));
+    }
+    void init() override;
+};
+}
+
+#endif // {{PLUGIN_NAME_UPPER}}_H
