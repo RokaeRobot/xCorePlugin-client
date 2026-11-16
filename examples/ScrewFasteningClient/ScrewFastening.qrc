@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/ScrewFastening/icons">
+        <file alias="chevron-down.png">resources/icons/chevron-down.png</file>
+        <file alias="chevron-down-disabled.png">resources/icons/chevron-down-disabled.png</file>
+    </qresource>
+</RCC>
